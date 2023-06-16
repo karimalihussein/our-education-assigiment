@@ -14,6 +14,8 @@ class Currency extends Model
         'code',
     ];
 
+    public $timestamps = false;
+
     public function users(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(User::class);

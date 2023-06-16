@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('balances', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('uuid', 9)->unique();
-            $table->string('email')->unique();
-            $table->foreignId('currency_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->decimal('amount', 16, 2);
+            $table->enum('type', ['deposit', 'withdraw']);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('balances');
     }
 };
