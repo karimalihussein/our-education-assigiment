@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Balance;
+use App\Models\Currency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Model
 {
@@ -26,6 +28,16 @@ class User extends Model
     public function balances(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Balance::class);
+    }
+
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function getBalanceAttribute(): float
+    {
+        return $this->balances()->sum('amount');
     }
 
     public static function boot(): void
