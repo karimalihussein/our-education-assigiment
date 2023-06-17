@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\Api\V1\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::get('test', [TestController::class, 'index']);
+// Route::get('test', [TestController::class, 'index']);
+
+
+Route::group(['prefix' => 'v1', 'as' => 'api.v1.company.', 'middleware' => ['language']], function () {
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get('users', [UsersController::class, 'index'])->name('users.index');
+    });
+});

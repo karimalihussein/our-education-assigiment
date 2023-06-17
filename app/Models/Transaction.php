@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
 {
@@ -16,6 +19,18 @@ class Transaction extends Model
         'amount',
         'payment_date'
     ];
+
+    protected $casts = [
+        'payment_date' => 'datetime',
+        'status' => TransactionStatus::class
+    ];
+
+    public function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => TransactionStatus::tryFrom($value)->label(),
+        );
+    }
 
     public function user()
     {

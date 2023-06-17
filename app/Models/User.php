@@ -7,10 +7,12 @@ use App\Models\Currency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Baro\PipelineQueryCollection\Concerns\Filterable;
+use Baro\PipelineQueryCollection\Contracts\CanFilterContract;
 
 class User extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Filterable;
 
     protected $fillable = [
         'uuid',
@@ -38,6 +40,13 @@ class User extends Model
     public function getBalanceAttribute(): float
     {
         return $this->balances()->sum('amount');
+    }
+
+    public function getFilters(): array
+    {
+        return [
+           
+        ];
     }
 
     public static function boot(): void

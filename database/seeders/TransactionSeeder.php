@@ -15,12 +15,11 @@ class TransactionSeeder extends Seeder
     public function run(): void
     {
         $transactions = public_path('json/transactions.json');
-        $transactions = json_decode(file_get_contents($transactions), true);
+        $transactions = json_decode(file_get_contents($transactions), true)['transactions'];
         foreach($transactions as $transaction){
             $user = User::query()->where('email', $transaction['parentEmail'])->first();
-            Transaction::updateOrCreate([
+            Transaction::create([
                 'uuid' => $transaction['parentIdentification'],
-            ],[
                 'user_id' => $user->id,
                 'amount' => $transaction['paidAmount'],
                 'status' => $transaction['statusCode'],
