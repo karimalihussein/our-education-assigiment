@@ -20,7 +20,13 @@ class CurrencySeeder extends Seeder
             ["name" => "United Arab Emirates Dirham","code" => "AED"],
             ["name" => "Euro", "code" => "EUR"],
         ];
-        // use insert instead of create to make one query instead of multiple queries using create method within loop and that will increase the performance and heave o(1) notation instead of o(n^2)
-        Currency::query()->insert($data);
+       foreach($data as $currency)
+       {
+           Currency::updateOrCreate([
+               'code' => $currency['code'],
+           ],[
+               'name' => $currency['name'],
+           ]);
+       }
     }
 }

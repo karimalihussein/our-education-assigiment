@@ -21,18 +21,20 @@ class UserSeeder extends Seeder
             $currency = Currency::where('code', $user['currency'])->first();
             $created_at = str_replace('/', '-', $user['created_at']);
             $created_at = date('Y-m-d H:i:s', strtotime($created_at));
-            $user2 = User::create([
+            $user2 = User::updateOrCreate([
+                'uuid' => $user['id'],
+            ],[
                 'name' => fake()->name(),
                 'email' => $user['email'],
-                'uuid' => $user['id'],
                 'currency_id' => $currency->id,
                 'created_at' => $created_at
             ]);
-            $balance = $user['balance'];
-            $user2->balances()->create([
-                'amount' => $balance,
+             $user2->balances()->updateOrCreate([
+                'amount' => $user['balance'],
+             ],[
                 'type'   => 'deposit'
-            ]);
+             ]);
+
         }
     }
 }
