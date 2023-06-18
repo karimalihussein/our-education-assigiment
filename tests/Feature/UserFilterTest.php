@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TransactionStatus;
+use App\Models\Currency;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -36,5 +38,18 @@ class UserFilterTest extends TestCase
         $this->assertEquals('2020-08-02', $response->json('data.0.created_at'));
     }
 
+    public function test_to_filter_users_by_currency(): void
+    {
+        $currency = Currency::query()->first();
+        $response = $this->get("/api/v1/admin/users?currency_code={$currency->code}");
+        $this->assertEquals($currency->code, $response->json('data.0.currency'));
+    }
+
+    public function test_to_filter_users_by_transaction_status(): void
+    {
+        $response = $this->get("/api/v1/admin/users?transactions_status[]=". TransactionStatus::DECLINED->value);
+        $this->assertEquals(TransactionStatus::DECLINED->label(), $response->json('data.0.transactions.0.status'));
+
+    }
 
 }

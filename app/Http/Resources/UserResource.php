@@ -18,6 +18,7 @@ class UserResource extends JsonResource
             'id' => $this->uuid,
             'name' => $this->name,
             'email' => $this->email,
+            'currency' => $this->currency->code,
             'balance' => "$this->balance {$this->currency->code}",
             'transactions' => TransactionResource::collection($this->whenLoaded('transactions')),
             'created_at' => $this->created_at->format('Y-m-d'),
