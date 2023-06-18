@@ -4,10 +4,17 @@ namespace App\Models;
 
 use App\Models\Balance;
 use App\Models\Currency;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
+use Baro\PipelineQueryCollection\ScopeFilter;
+use Baro\PipelineQueryCollection\DateToFilter;
+use Baro\PipelineQueryCollection\DateFromFilter;
+use Baro\PipelineQueryCollection\RelationFilter;
 use Baro\PipelineQueryCollection\Concerns\Filterable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Baro\PipelineQueryCollection\Contracts\CanFilterContract;
 
 class User extends Model
@@ -42,10 +49,30 @@ class User extends Model
         return $this->balances()->sum('amount');
     }
 
+    public function scopeFilterAmoutRange($query): void
+    {
+        $request = app(Request::class);
+        if ($request->has('amount_from') && $request->has('amount_to')) {
+            $query->whereHas('balances', function ($query) use ($request) {
+                $query->whereBetween('amount', [$request->amount_from, $request->amount_to]);
+            });
+        }
+    }
+
+    public function scopeSearch(Builder $query, string $keyword): Builder
+    {
+        return $query->where('name', 'like', '%'.$keyword.'%')->orWhere('email', 'like', '%'.$keyword.'%');
+    }
+
+
     public function getFilters(): array
     {
         return [
-           
+            new ScopeFilter('search'),
+           (new RelationFilter('currency', 'code')),
+           (new RelationFilter('transactions', 'status')),
+           (new DateFromFilter('created_at')),
+           (new DateToFilter('created_at')),
         ];
     }
 
